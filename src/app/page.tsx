@@ -3,24 +3,29 @@
 import { useEffect, useState } from "react";
 import type { Advocate } from "../types/advocate";
 import { matchesSearch } from "../lib/search";
+import { formatPhoneNumber } from "@/lib/displayString";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    setLoading(true);
+
     fetch("/api/advocates")
       .then((response) => response.json())
       .then((jsonResponse) => {
         const data = (jsonResponse.data || []) as Advocate[];
-        console.log(data);
         setAdvocates(data);
         setFilteredAdvocates(data);
       })
       .catch((err) => {
         console.error("failed to fetch advocates", err);
       });
+
+    setLoading(false);
   }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,60 +45,108 @@ export default function Home() {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span>{searchTerm}</span>
-        </p>
-        <input
-          value={searchTerm}
-          style={{ border: "1px solid black" }}
-          onChange={onChange}
-          placeholder="Type to search advocates..."
-        />
-        <button type="button" onClick={onClick}>
-          Reset Search
-        </button>
-      </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
-            const rowKey = `${advocate.phoneNumber}-${advocate.firstName}-${advocate.lastName}`;
-            return (
-              <tr key={rowKey}>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s, i) => (
-                    <div key={`${i}-specialties-${s}`}>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
+    <main className="p-6">
+      <h1 className="text-2xl font-bold text-blue-900 mb-6">
+        Solace Advocates
+      </h1>
+      <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
+        <div className="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12">
+          <p>Search</p>
+          <p>
+            Searching for: <span>{searchTerm}</span>
+          </p>
+          <input
+            value={searchTerm}
+            style={{ border: "1px solid black" }}
+            onChange={onChange}
+            placeholder="Type to search advocates..."
+          />
+          <button type="button" onClick={onClick}>
+            Reset Search
+          </button>
+        </div>
+        <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
+          <table className="table-fixed">
+            <thead>
+              <tr>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  First Name
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  Last Name
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  City
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  Degree
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  Specialties
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">
+                  Years of Experience
+                </th>
+                <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider w-[170px]">
+                  Phone Number
+                </th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody className="bg-white">
+              {filteredAdvocates.map((advocate) => {
+                return (
+                  <tr
+                    key={`${advocate.firstName}-${advocate.lastName}-${advocate.phoneNumber}`}
+                  >
+                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                      <div className="text-sm leading-5 text-blue-900">
+                        {advocate.firstName}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                      <div className="text-sm leading-5 text-blue-900">
+                        {advocate.lastName}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                      {advocate.city}
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                      {advocate.degree}
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                      {advocate.specialties.map((specialty) => (
+                        <span
+                          key={`${advocate.firstName}-${specialty}`}
+                          className="inline-block bg-blue-100 rounded-full px-3 py-1 text-xs font-semibold text-blue-700 mr-2 mb-1"
+                        >
+                          {specialty}
+                        </span>
+                      ))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                      {advocate.yearsOfExperience}
+                    </td>
+                    <td className="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
+                      {formatPhoneNumber(advocate.phoneNumber)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          {loading && (
+            <div className="text-center py-6 text-gray-600">Loading...</div>
+          )}
+
+          {!loading && advocates.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No advocates found matching your search criteria.
+            </div>
+          )}
+        </div>
+      </div>
     </main>
   );
 }
