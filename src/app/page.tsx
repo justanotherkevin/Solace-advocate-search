@@ -1,43 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { Advocate } from "../types/advocate";
+import { matchesSearch } from "../lib/search";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
+    fetch("/api/advocates")
+      .then((response) => response.json())
+      .then((jsonResponse) => {
+        const data = (jsonResponse.data || []) as Advocate[];
+        console.log(data);
+        setAdvocates(data);
+        setFilteredAdvocates(data);
+      })
+      .catch((err) => {
+        console.error("failed to fetch advocates", err);
       });
-    });
   }, []);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value;
+    setSearchTerm(term);
 
-    document.getElementById("search-term").innerHTML = searchTerm;
+    const filtered = advocates.filter((advocate) =>
+      matchesSearch(advocate, term)
+    );
 
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    setFilteredAdvocates(filtered);
   };
 
   const onClick = () => {
-    console.log(advocates);
+    setSearchTerm("");
     setFilteredAdvocates(advocates);
   };
 
@@ -49,10 +47,17 @@ export default function Home() {
       <div>
         <p>Search</p>
         <p>
-          Searching for: <span id="search-term"></span>
+          Searching for: <span>{searchTerm}</span>
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
+        <input
+          value={searchTerm}
+          style={{ border: "1px solid black" }}
+          onChange={onChange}
+          placeholder="Type to search advocates..."
+        />
+        <button type="button" onClick={onClick}>
+          Reset Search
+        </button>
       </div>
       <br />
       <br />
@@ -70,15 +75,16 @@ export default function Home() {
         </thead>
         <tbody>
           {filteredAdvocates.map((advocate) => {
+            const rowKey = `${advocate.phoneNumber}-${advocate.firstName}-${advocate.lastName}`;
             return (
-              <tr>
+              <tr key={rowKey}>
                 <td>{advocate.firstName}</td>
                 <td>{advocate.lastName}</td>
                 <td>{advocate.city}</td>
                 <td>{advocate.degree}</td>
                 <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
+                  {advocate.specialties.map((s, i) => (
+                    <div key={`${i}-specialties-${s}`}>{s}</div>
                   ))}
                 </td>
                 <td>{advocate.yearsOfExperience}</td>
