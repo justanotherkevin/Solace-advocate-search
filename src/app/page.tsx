@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Advocate } from "../types/advocate";
 import { matchesSearch } from "../lib/search";
 import { formatPhoneNumber } from "@/lib/displayString";
-import SearchBar from "@/app/components/SearcgBar";
+import SearchBar from "@/app/components/SearchBar";
+import { debounce } from "@/lib/debound";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -29,15 +30,27 @@ export default function Home() {
     setLoading(false);
   }, []);
 
+  const debouncedFilter = useMemo(
+    () =>
+      debounce((term: string) => {
+        const filtered = advocates.filter((advocate) =>
+          matchesSearch(advocate, term)
+        );
+        setFilteredAdvocates(filtered);
+      }, 300),
+    [advocates]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedFilter.cancel();
+    };
+  }, [debouncedFilter]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
-
-    const filtered = advocates.filter((advocate) =>
-      matchesSearch(advocate, term)
-    );
-
-    setFilteredAdvocates(filtered);
+    debouncedFilter(term);
   };
 
   const handleReset = () => {
