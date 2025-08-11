@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Advocate } from "../types/advocate";
 import { matchesSearch } from "../lib/search";
 import { formatPhoneNumber } from "@/lib/displayString";
+import SearchBar from "@/app/components/SearcgBar";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -28,7 +29,7 @@ export default function Home() {
     setLoading(false);
   }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value;
     setSearchTerm(term);
 
@@ -39,7 +40,7 @@ export default function Home() {
     setFilteredAdvocates(filtered);
   };
 
-  const onClick = () => {
+  const handleReset = () => {
     setSearchTerm("");
     setFilteredAdvocates(advocates);
   };
@@ -51,19 +52,12 @@ export default function Home() {
       </h1>
       <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
         <div className="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12">
-          <p>Search</p>
-          <p>
-            Searching for: <span>{searchTerm}</span>
-          </p>
-          <input
+          <SearchBar
             value={searchTerm}
-            style={{ border: "1px solid black" }}
-            onChange={onChange}
-            placeholder="Type to search advocates..."
+            onChange={handleInputChange}
+            onReset={handleReset}
+            isLoading={loading}
           />
-          <button type="button" onClick={onClick}>
-            Reset Search
-          </button>
         </div>
         <div className="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
           <table className="table-fixed">
