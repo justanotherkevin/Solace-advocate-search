@@ -43,8 +43,14 @@ curl -X POST http://localhost:3000/api/seed
 ## Preview
 
 <details>
-  <summary>Search with modal</summary>
+  <summary>Main branch demo</summary>
   <video width="320" height="240" controls>
-    <source src="Screen Recording 2025-08-12 at 4.57.18 PM.mov" type="video/mp4">
+    <source src="[Screen Recording 2025-08-12 at 4.57.18 PM.mov](https://github.com/justanotherkevin/Solace-advocate-search/blob/main/main_demo.mov)" type="video/mp4">
+  </video>
+</details>
+<details>
+  <summary>V1 branch search with modal</summary>
+  <video width="320" height="240" controls>
+    <source src="[Screen Recording 2025-08-12 at 4.57.18 PM.mov](https://github.com/justanotherkevin/Solace-advocate-search/blob/main/v1_demo.mov)" type="video/mp4">
   </video>
 </details>
