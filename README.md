@@ -39,3 +39,12 @@ npx drizzle-kit push
 ```bash
 curl -X POST http://localhost:3000/api/seed
 ```
+
+## Preview
+
+<details>
+  <summary>Search with modal</summary>
+  <video width="320" height="240" controls>
+    <source src="Screen Recording 2025-08-12 at 4.57.18 PM.mov" type="video/mp4">
+  </video>
+</details>
