@@ -46,13 +46,14 @@ curl -X POST http://localhost:3000/api/seed
   <summary>Main branch demo</summary>
   demo video of main branch
 
-<video width="320" height="240" src='https://github.com/justanotherkevin/Solace-advocate-search/blob/main/main_demo.mov' controls ></video>
+  https://github.com/user-attachments/assets/8596a7df-7281-4990-bf60-5e0f46c242ff
 
 </details>
+
 <details>
   <summary>V1 branch search with modal</summary>
   demo video of v1 branch with filter modal
-
-<video width="320" height="240"  src='https://github.com/justanotherkevin/Solace-advocate-search/blob/main/v1_demo.mov' controls ></video>
+  
+  https://github.com/user-attachments/assets/1f34ec9b-6351-41ee-9f73-ab9930ea8870
 
 </details>
