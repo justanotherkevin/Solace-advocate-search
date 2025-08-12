@@ -18,7 +18,7 @@ References to current implementation:
 
 ## 2. Problem Statement
 
-The current search UX uses a single text input to match across multiple fields. This is not optimal for discrete attributes like city, degree, specialties, or years of experience. Users must guess keywords and formatting, and results may be imprecise.
+The current search UX uses a single text input to match across multiple fields. This is not optimal for discrete at tributes like city, degree, specialties, or years of experience. Users must guess keywords and formatting, and results may be imprecise.
 
 ## 3. Goals
 
